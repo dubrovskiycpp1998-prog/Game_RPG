@@ -38,6 +38,7 @@ class RobberyMeetEvent (AdventureState, RandomEvent):
             hero.money_balance -= 500
             print("\nВЫ отдали разбойнику 500 монет")
             print(f"Ваш баланс: {hero.money_balance}")
+            return  # Выход из метода handle_input, чтобы не продолжать обработку
 
         if user_input == "2":
             hero.health -= robbery_get_health
@@ -45,12 +46,16 @@ class RobberyMeetEvent (AdventureState, RandomEvent):
             print(f"Ваше здоровье = {hero.health}")
 
         if user_input == "1" and hero.money_balance <= 500:
-            print("\nВЫ не можете отдать разбойнику 500 монет, ваш баланс меньше!")
-            print("Разбойник наносит вам двойной урон")
-            hero.health -= 2*robbery_get_health
-            print(f"Ваше здоровье = {hero.health}")
-            
-
+            print("\n⚠️ У вас недостаточно монет для откупа! Хотите взять кредит? (y/n)")
+            if input().lower() == 'y':
+                # Активируем долг через менеджер кредитов
+                self.engine.credit.activating_debt(hero, amount=150)
+                print(f"Ваш баланс после кредита: {hero.money_balance}")
+            else:
+                print("Вы решили не брать кредит. Разбойник наносит вам удар!")
+                hero.health -= robbery_get_health
+                print(f"Ваше здоровье = {hero.health}")
+           
         # Проверка: выжил ли герой после удара разбойника?
         if hero.health <= 0:
             # Герой погиб. Останавливаем движок приключений. 

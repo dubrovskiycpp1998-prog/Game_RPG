@@ -16,6 +16,12 @@ class Inventory():
         else:
             print("Инвентарь пуст.")
 
+    def print_information(self):
+        """Выводит информацию о текущем состоянии инвентаря."""
+        print(f"Максимальная вместимость: {self.max_capacity}")
+        print(f"Текущее количество уникальных предметов: {len(self.items)}")
+        self.list_items()
+
     def add_item(self, item):
         """Добавляет предмет в хеш-таблицу, если есть место."""
         

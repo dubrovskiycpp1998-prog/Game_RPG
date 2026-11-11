@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 import random
 
 # Ваши оригинальные импорты персонажей и лута
+from AI_Game.calculation_step import Calculation_Step
 from characters.enemies import Goblin, Dragon, Troll
 from characters.loot import Potion, Magic_Ball
 
@@ -10,6 +11,7 @@ from core.events import game_events
 
 # В начало файла core/game_loop.py не забудьте импортировать базовый класс событий
 from random_events.base_event import RandomEvent
+from AI_Game.calculation_step import Calculation_Step
 
 
 # =====================================================================
@@ -18,6 +20,7 @@ from random_events.base_event import RandomEvent
 class AdventureState(ABC):
     def __init__(self, engine):
         self.engine = engine  # Ссылка на GameEngine, где хранится герой
+        self.calculation = Calculation_Step(global_step=0, debt_step=0) 
 
     @abstractmethod
     def render(self):
@@ -42,7 +45,7 @@ class MapState(AdventureState):
         print("Вы исследуете локацию. Что делаете?")
         print("1. Идти вперед (Случайное событие)")
         print("2. Завершить поход и вернуться в Таверну")
-
+        
     def handle_input(self, user_input: str):
         if user_input == "1":
             # Ленивый импорт событий из папки random_events, чтобы не было круговых импортов
@@ -50,6 +53,12 @@ class MapState(AdventureState):
             from random_events.shrine import HealingShrineEvent
             from random_events.robbery import RobberyMeetEvent
             
+            # 
+            self.engine.calculation.update_step(self.engine)        # Вызываем метод у сохраненного объекта
+            self.engine.message = self.engine.credit.get_message()
+            self.engine.calculation.print_steps()  # Выводим информацию о шагах после пересчета долга
+            self.engine.calculation.print_credit_info(self.engine, is_debt=self.engine.credit.is_debt)  # Выводим информацию о кредите
+                
             # Собираем ВСЕ события игры в один красивый массив объектов!
             possible_events = [
                 BattleState(self.engine),      # Передаем движок, execute сам создаст врага
@@ -221,6 +230,21 @@ class GameEngine:
     def __init__(self, hero):
         self.hero = hero
         self._is_running = True
+        from core.credit import Credit_Manager
+         # === ДОБАВЛЯЕМ ВАШИ МЕХАНИКИ СЮДА ===
+        # Создаем один постоянный объект для подсчета шагов
+        self.calculation = Calculation_Step(global_step=0, debt_step=0)
+        
+        # Создаем один постоянный объект кредита
+        self.credit = Credit_Manager(is_debt=False, initial_debt=150, current_debt=150)
+        # ====================================
+
+        self.message = Credit_Manager(is_debt=True, initial_debt=150, current_debt=150)  # Получаем сообщение о кредите при инициализации
+
+        self.calculation.print_steps()  # Выводим информацию о шагах при инициализации
+        self.calculation.print_credit_info(self, is_debt=self.credit.is_debt)  # Выводим информацию о кредите при инициализации
+        # Обновляем шаги при инициализации
+        self.calculation.print_credit_info(self, is_debt=self.credit.is_debt)  # Выводим информацию о кредите при инициализации
         # Каждый поход начинается с исследования карты мира
         self._state = MapState(self)
 

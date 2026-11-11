@@ -1,13 +1,15 @@
 from core.inventory import Inventory
 
 class Hero:
-    def __init__(self, name, health, attack_power, who_is_character, money_balance = 2000):
+    def __init__(self, name, health, attack_power, who_is_character, money_balance = 300, respect_hero = 50, stamina = 100):
         self.name = name
         self.health = health
         self.attack_power = attack_power
         self.inventory = Inventory()
         self.who_is_character = who_is_character
         self.money_balance = money_balance
+        self.respect = respect_hero
+        self.stamina = stamina
       
 
     # Геттер для безопасного получения здоровья
@@ -28,6 +30,14 @@ class Hero:
         print("Введите имя персонажа")
         self.name = input("Как вас зовут? ")
 
+    def print_info(self):
+        print(f"Имя: {self.name}")
+        print(f"Здоровье: {self.health}")
+        print(f"Атака: {self.attack_power}")
+        print(f"Баланс монет: {self.money_balance}")
+        print(f"Уважение: {self.respect}")
+        print(f"Выносливость: {self.stamina}")
+
 
     def unique_ability(self, other):
         pass  # Метод будет переопределен в подклассах
@@ -36,6 +46,9 @@ class Hero:
         print(f"{self.name} атакует {target.name} и наносит {self.attack_power} урона!")
         target.health -= self.attack_power
         self.money_balance += 50
+        self.stamina -= 10
+        self.respect += 5
+
 
     def get_paid(self):
         self.money_balance -= 500

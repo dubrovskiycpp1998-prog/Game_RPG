@@ -8,7 +8,7 @@ class Knight(Hero):
 
     def __init__(self, name):
         # Передаем родительскому классу Hero только то, что он ожидает
-        super().__init__(name, health=120, attack_power=15, who_is_character=1)
+        super().__init__(name, health=120, attack_power=15, who_is_character=1, money_balance=500, respect_hero=50, stamina=20)
        
         # Создаем уникальный атрибут прочности щита для конкретного Рыцаря
         self.shield_capacity = 50
@@ -28,7 +28,7 @@ class Knight(Hero):
    
 class Stranger(Hero):
     def __init__(self, name):
-        super().__init__(name, health=80, attack_power=10, who_is_character=2)
+        super().__init__(name, health=80, attack_power=10, who_is_character=2, money_balance=100, respect_hero=30, stamina=60)
         self.is_hidden = True  # Изначально Странник скрыт
 
         self.is_hidden_capacity = 30
@@ -48,7 +48,7 @@ class Stranger(Hero):
 
 class Witcher(Hero):
     def __init__(self, name):
-        super().__init__(name, health=100, attack_power=30, who_is_character=3)
+        super().__init__(name, health=100, attack_power=30, who_is_character=3, money_balance=300, respect_hero=70, stamina=40)
         # Инициализируем запас магической силы внутри персонажа
 
         self.magic_power_capacity = 50 

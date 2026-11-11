@@ -42,6 +42,8 @@ class CharacterSelectionState(GameplayState):
             return
 
         print(f"\nВы выбрали класс: {self.gameplay.hero.name}!")
+        self.gameplay.hero.get_name()  # Запрашиваем имя у игрока
+        self.gameplay.hero.print_info()
         self.gameplay.count_win = 0  # Сбрасываем победы у нового персонажа
         
         # Сразу отправляем нового героя в его первое приключение!
@@ -62,7 +64,7 @@ class InventoryState(GameplayState):
 
     def handle_input(self, user_input: str):
         if user_input == "1":
-            self.gameplay.hero.inventory.list_items()
+            self.gameplay.hero.inventory.print_information()
             return  # Возвращаемся к выбору действия после просмотра инвентаря
         elif user_input == "2":
             self.gameplay.hero.inventory.use_item()  # Передаем первый предмет из инвентаря
