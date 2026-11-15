@@ -6,12 +6,15 @@ from AI_Game.calculation_step import Calculation_Step
 from characters.enemies import Goblin, Dragon, Troll
 from characters.loot import Potion, Magic_Ball
 
+
 # В самом верху core/game_loop.py добавьте импорт объекта событий
 from core.events import game_events
+
 
 # В начало файла core/game_loop.py не забудьте импортировать базовый класс событий
 from random_events.base_event import RandomEvent
 from AI_Game.calculation_step import Calculation_Step
+from random_events.Treasure import TreasureEvent
 
 
 # =====================================================================
@@ -29,6 +32,12 @@ class AdventureState(ABC):
     @abstractmethod
     def handle_input(self, user_input: str):
         pass
+
+    def get_weight(self, hero):
+        """
+        Метод для получения веса события. По умолчанию возвращает 0.5.
+        """
+        return 0.5
 
 
 # =====================================================================
@@ -65,14 +74,36 @@ class MapState(AdventureState):
                 LootState(self.engine),        # execute сам создаст предмет лута
                 CasinoEncounterEvent(),        # Наше событие казино
                 HealingShrineEvent(),          # Наш текстовый алтарь исцеления
-                RobberyMeetEvent(self.engine)             # Встреча с разбойником
+                RobberyMeetEvent(self.engine), # Встреча с разбойником
+                TreasureEvent()                # Сундук с сокровищами
             ]
-            
-            # Выбираем абсолютно любое событие по одному правилу
-            chosen_event = random.choice(possible_events)
-            
+
+            event_weights = [event.get_weight(self.engine.hero) for event in possible_events]
+            # Выбираем событие с учетом весов   
+            chosen_event = random.choices(possible_events, weights=event_weights, k=1)[0]
             # Запускаем полиморфный метод execute!
             chosen_event.execute(self.engine)
+
+            ###############################################
+            #Механика начисления коэффициентов, за 2 и больше убитых врагов подряд 
+            ###############################################
+            # В методе инициализации (__init__) задаем счетчик один раз:
+            # self.win_streak = 0
+
+            #if isinstance(chosen_event, BattleState):
+                #if is_hero_win:
+                    #self.win_streak += 1
+                    
+                    # Определяем множитель: x2 за 2 и более побед подряд, иначе x1
+                    #multiplier = 2 if self.win_streak >= 2 else 1
+                    
+                    # Начисляем опыт за конкретного врага (base_xp), а не от всего XP героя
+                    #earned_xp = base_xp * multiplier
+                    #hero.xp += earned_xp
+                #else:
+                    # Сбрасываем серию при поражении или побеге
+                    #self.win_streak = 0
+
                 
         elif user_input == "2":
             print("\nВы решили вернуться в таверну...")

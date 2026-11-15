@@ -28,7 +28,7 @@ class Knight(Hero):
    
 class Stranger(Hero):
     def __init__(self, name):
-        super().__init__(name, health=80, attack_power=10, who_is_character=2, money_balance=100, respect_hero=30, stamina=60)
+        super().__init__(name, health=80, attack_power=10, who_is_character=2, money_balance=10000, respect_hero=30, stamina=60)
         self.is_hidden = True  # Изначально Странник скрыт
 
         self.is_hidden_capacity = 30

@@ -1,6 +1,7 @@
 import random
 from core.game_loop import AdventureState
 from random_events.base_event import RandomEvent
+from core.events import game_events
 
 # =====================================================================
 #Случайное Событие Казино
@@ -11,7 +12,37 @@ class CasinoEncounterEvent(RandomEvent):
     def execute(self, engine):
         print("\n🔍 Среди деревьев вы заметили неоновую вывеску тайного заведения...")
         # Переключаем движок игры на экран казино, который написан ниже
+         
+# 👇 ГЕНЕРИРУЕМ СОБЫТИЕ ПЕРЕД ВЫХОДОМ ИЗ МЕТОДА!
+        # Создаем объект события с пустыми данными (или можно добавить нужные данные)
+        event_data = {
+                
+        }
+        # Оповещаем всех подписчиков события "ability_used"
+        game_events.notify("casino_entered", data=event_data)
+
         engine.set_state(CasinoState(engine))
+
+    def get_weight(self, hero):
+        """
+        Метод для получения веса события. По умолчанию возвращает 0.5.
+        """
+        weight = 0.5
+        # Если у героя нет денег вероятность события равна 0
+        if hero.money_balance <= 0:
+            weight = 0.0
+        # Если у героя мало денег, уменьшаем вероятность события
+        elif hero.money_balance < 300:
+            weight -= 0.3  # 
+        elif hero.money_balance < 500:
+            weight -= 0.15 # 
+        # Если у героя много денег, увеличиваем вероятность события
+        elif hero.money_balance > 1000:
+            weight += 0.3  # 
+        elif hero.money_balance > 800:
+            weight += 0.2  # 
+          
+        return weight
 
 
 class CasinoState(AdventureState):

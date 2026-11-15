@@ -38,7 +38,7 @@ class RobberyMeetEvent (AdventureState, RandomEvent):
             hero.money_balance -= 500
             print("\nВЫ отдали разбойнику 500 монет")
             print(f"Ваш баланс: {hero.money_balance}")
-            return  # Выход из метода handle_input, чтобы не продолжать обработку
+            # Выход из метода handle_input, чтобы не продолжать обработку
 
         if user_input == "2":
             hero.health -= robbery_get_health

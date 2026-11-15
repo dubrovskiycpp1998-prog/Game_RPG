@@ -4,6 +4,7 @@ from core.game_loop import GameEngine  # Импортируем обновлен
 # Добавляем импорт объекта событий и функций в самый верх core/gameplay.py
 from core.events import game_events, on_enemy_slain_give_gold, on_enemy_slain_play_sound
 from core.events import game_events, achievement_manager
+from core.events import game_events, casino_entry_manager
 from core.inventory import Inventory  # Импортируем класс Inventory
 
 # =====================================================================
@@ -158,6 +159,9 @@ class Gameplay:
         game_events.subscribe("enemy_death", on_enemy_slain_play_sound)
         # 👇 ПОДПИСЫВАЕМ СИСТЕМУ АЧИВОК НА НОВОЕ СОБЫТИЕ
         game_events.subscribe("ability_used", achievement_manager.track_ability_spending)
+        # 👇  АЧИВКА НА ПОСЕЩЕНИЕ КАЗИНО
+         # Используем тот же менеджер ачивок
+        game_events.subscribe("casino_entered", achievement_manager.track_casino_entry)
 
     def set_state(self, new_state: GameplayState):
         """Метод смены глобальных экранов."""
